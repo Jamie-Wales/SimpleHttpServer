@@ -20,6 +20,7 @@ public class SimpleHttpServer {
                    e.getStackTrace();
                }
            });
+
            thread.start();
        }
 
