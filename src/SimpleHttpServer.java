@@ -13,7 +13,14 @@ public class SimpleHttpServer {
 
        while (true) {
            Socket client = server.accept();
-           handleRequest(client);
+           Thread thread = new Thread(() -> {
+               try {
+                   handleRequest(client);
+               } catch (IOException e) {
+                   e.getStackTrace();
+               }
+           });
+           thread.start();
        }
 
 
