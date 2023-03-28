@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.Buffer;
@@ -38,8 +35,23 @@ public class SimpleHttpServer {
 
 
         if ("/".equals(path)) {
-            String message = "<html><h1>Hello World!<h1></html>";
-            byte[] responseBytes = message.getBytes();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            try {
+                BufferedReader html = new BufferedReader(new FileReader("src/helloWorld.html"));
+                String line = html.readLine();
+
+                while (line != null) {
+                    stringBuilder.append(line);
+                    line = html.readLine();
+                }
+                html.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+
+            String content = stringBuilder.toString();
+            byte[] responseBytes = content.getBytes();
 
             out.write("HTTP/1.1 200 OK\r\n".getBytes());
             out.write("Content-type: text/html\r\n".getBytes());
