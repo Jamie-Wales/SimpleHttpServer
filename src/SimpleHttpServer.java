@@ -1,25 +1,26 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.Buffer;
+
 
 public class SimpleHttpServer {
     public static void main(String[] args) throws IOException {
 
-       ServerSocket server = new ServerSocket(8080);
+        try (ServerSocket server = new ServerSocket(8000)) {
 
-       while (true) {
-           Socket client = server.accept();
-           Thread thread = new Thread(() -> {
-               try {
-                   handleRequest(client);
-               } catch (IOException e) {
-                   e.getStackTrace();
-               }
-           });
+            while (true) {
+                Socket client = server.accept();
+                Thread thread = new Thread(() -> {
+                    try {
+                        handleRequest(client);
+                    } catch (IOException e) {
+                        e.getStackTrace();
+                    }
+                });
 
-           thread.start();
-       }
+                thread.start();
+            }
+        }
 
 
     }
@@ -27,15 +28,12 @@ public class SimpleHttpServer {
     public static void handleRequest(Socket client) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
         OutputStream out = client.getOutputStream();
-
         String request = in.readLine();
         String[] requestParts = request.split(" ");
         String method = requestParts[0];
         String path = requestParts[1];
 
-
         if ("/".equals(path)) {
-
             StringBuilder stringBuilder = new StringBuilder();
             try {
                 BufferedReader html = new BufferedReader(new FileReader("src/helloWorld.html"));
